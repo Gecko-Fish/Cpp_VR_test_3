@@ -15,9 +15,6 @@ class CPP_VR_TEST_3_API UMyBlueprintFunctionLibrary : public UBlueprintFunctionL
 	GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintCallable, Category = "Testing")
-    static void PrintHelloWorld();
-
 	UFUNCTION(BlueprintCallable, Category = "Testing")
-	static void HttpReq();
+	static void HttpReq(const FString& Url, const FString& HttpMethod, const FString& Payload);
 };

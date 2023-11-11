@@ -7,12 +7,7 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
-void UMyBlueprintFunctionLibrary::PrintHelloWorld()
-{
-    UE_LOG(LogTemp, Log, TEXT("Hello, World"));
-}
-
-void UMyBlueprintFunctionLibrary::HttpReq()
+void UMyBlueprintFunctionLibrary::HttpReq(const FString& Url, const FString& HttpMethod = "GET", const FString& Payload = "")
 {
     // Get the HTTP module
     FHttpModule& HttpModule = FHttpModule::Get();
@@ -20,11 +15,15 @@ void UMyBlueprintFunctionLibrary::HttpReq()
     // Create a request
     TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = HttpModule.CreateRequest();
     
+    if (!Payload.IsEmpty()) {
+        Request->SetContentAsString(Payload);
+    }
+
     // Set the HTTP method
-    Request->SetVerb(TEXT("GET"));
+    Request->SetVerb(HttpMethod);
     
     // Set the URL for the API call
-    Request->SetURL(TEXT("https://httpbin.org/get"));
+    Request->SetURL(Url);
 
     // Set up the response processing
     Request->OnProcessRequestComplete().BindLambda(
@@ -33,8 +32,8 @@ void UMyBlueprintFunctionLibrary::HttpReq()
                 // Handle the response data here
                 FString Response = HttpResponse->GetContentAsString();
                 // Process the 'Response' data
-                UE_LOG(LogTemp, Log, TEXT("API Request Made:"));
-                // UE_LOG(LogTemp, Log, TEXT(Response));
+                UE_LOG(LogTemp, Log, TEXT("Http request made:"));
+                UE_LOG(LogTemp, Log, TEXT("%s"), *Response);
             } else {
                 // Log an error if the request fails
                 UE_LOG(LogTemp, Error, TEXT("Request failed."));
